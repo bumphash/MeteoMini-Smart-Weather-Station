@@ -626,3 +626,85 @@ The Main ESP32 handles incoming web requests, accesses the required system data 
 
 Because the web application is stored locally on the W25Q32, MeteoMini does not require an external web server to operate its user interface.
 
+# 8. Data Management & Storage
+
+MeteoMini uses local non-volatile storage to keep the web application and historical environmental measurements directly on the Main Unit.
+
+The external **W25Q32 SPI flash memory** is connected to the Main ESP32 and provides persistent storage for the system.
+
+## 8.1 W25Q32 Storage
+
+The W25Q32 is used for two primary purposes:
+
+* storing the MeteoMini web application;
+* storing historical measurement data.
+
+Using the same external flash memory for both functions allows the complete application and its measurement history to remain locally available on the device.
+
+The system does not require an external database or cloud storage service for normal operation.
+
+## 8.2 Web Application Storage
+
+The web interface resources are stored in the W25Q32 flash memory.
+
+When a user connects to the MeteoMini web server through Wi-Fi, the Main ESP32 reads the required web resources from the flash memory and sends them to the user's browser.
+
+The stored resources form the user interface of the station and provide the Dashboard, Weather, History, Settings, Night Mode and About sections.
+
+The basic process is:
+
+<p align="center">
+  <b>W25Q32 → Main ESP32 Web Server → Wi-Fi → Web Browser</b>
+</p>
+
+This approach allows the web interface to operate directly from the embedded device without requiring a separate computer or server.
+
+## 8.3 Historical Measurement Storage
+
+MeteoMini stores measurement data locally in the W25Q32 flash memory.
+
+The Main ESP32 receives environmental measurements from the Outdoor Unit through ESP-NOW and reads local measurements from the DHT11. The processed data can then be recorded as historical measurements.
+
+The stored data provides the source for the **History** section of the web interface.
+
+The basic data flow is:
+
+<p align="center">
+  <b>
+  Outdoor Sensors → Outdoor ESP32 → ESP-NOW → Main ESP32<br>
+  ↓<br>
+  DHT11 → Main ESP32<br>
+  ↓<br>
+  W25Q32 → Historical Data
+  </b>
+</p>
+
+## 8.4 Historical Data Access
+
+When the user opens the History section, the Main ESP32 accesses the stored measurement records from the W25Q32 and provides the required data to the web application.
+
+The browser then presents the historical measurements through the MeteoMini user interface.
+
+This creates a complete local data path:
+
+<p align="center">
+  <b>W25Q32 → Main ESP32 → Web Server → Wi-Fi → Browser → History</b>
+</p>
+
+## 8.5 Local Data Architecture
+
+The use of local flash storage provides several advantages:
+
+* no external database is required;
+* no cloud connection is required for historical data;
+* the web application remains stored directly on the device;
+* historical measurements remain available after a restart;
+* the system can operate as a self-contained monitoring station.
+
+The storage architecture can be summarized as:
+
+| Data                    | Storage        | Purpose                    |
+| ----------------------- | -------------- | -------------------------- |
+| Web Application         | W25Q32         | Local Web UI               |
+| Historical Measurements | W25Q32         | Long-term data access      |
+| Current Measurements    | Main ESP32 RAM | Real-time system operation |
