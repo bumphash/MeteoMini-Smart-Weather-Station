@@ -354,3 +354,143 @@ The W25Q32 external flash memory is connected to the Main ESP32 using SPI.
 | ESP-NOW   | Outdoor ↔ Main | ESP32 ↔ ESP32     | Wireless                                |
 | Wi-Fi     | Main           | Web Browser       | Wireless                                |
 
+
+# 6. Software Architecture
+
+The MeteoMini software is divided into two embedded firmware components and a local web application.
+
+The **Outdoor ESP32 firmware** is responsible for sensor acquisition and wireless transmission. The **Main ESP32 firmware** acts as the central application controller, manages local hardware, stores measurement data and provides the web interface.
+
+## 6.1 Outdoor Unit Firmware
+
+The Outdoor ESP32 firmware is responsible for collecting environmental data from the SCD41 and BME680 sensors.
+
+The firmware periodically performs the following operations:
+
+1. Initializes the connected sensors.
+2. Reads the current measurements from the SCD41.
+3. Reads the current measurements from the BME680.
+4. Processes the acquired sensor values.
+5. Creates a measurement data packet.
+6. Transmits the packet to the Main ESP32 using ESP-NOW.
+7. Repeats the measurement cycle.
+
+The Outdoor Unit operates independently from the user interface. Its primary purpose is reliable acquisition and transmission of outdoor environmental measurements.
+
+## 6.2 Main Unit Firmware
+
+The Main ESP32 firmware is the central software component of MeteoMini.
+
+It performs several tasks simultaneously:
+
+* receives measurements from the Outdoor ESP32;
+* reads the local DHT11 sensor;
+* processes measurement data;
+* controls the ST7789 display;
+* manages the W25Q32 flash memory;
+* stores historical measurements;
+* runs the local web server;
+* serves the web application;
+* processes commands received from the web interface;
+* manages system settings.
+
+The Main Unit combines data received from the Outdoor Unit with measurements from the local DHT11 and makes the resulting information available to both the local display and the web interface.
+
+## 6.3 ESP-NOW Communication
+
+ESP-NOW is used as the communication layer between the two ESP32 controllers.
+
+The Outdoor ESP32 acts as the transmitting node, while the Main ESP32 acts as the receiving node.
+
+The Outdoor Unit sends a structured measurement packet containing the available sensor values. The Main Unit receives the packet and updates the corresponding environmental parameters.
+
+The communication path is:
+
+<p align="center">
+  <b>Outdoor Sensors → Outdoor ESP32 → ESP-NOW → Main ESP32</b>
+</p>
+
+This architecture separates outdoor measurement acquisition from the main processing and user-interface functions.
+
+## 6.4 Measurement Processing
+
+After receiving data from the Outdoor Unit, the Main ESP32 processes the measurements together with the local DHT11 data.
+
+The resulting dataset represents the current state of the monitored environment and is used by several system components:
+
+* local display;
+* web Dashboard;
+* Weather page;
+* historical data storage;
+* other system functions requiring current measurements.
+
+The Main ESP32 therefore acts as the central data processing point of the system.
+
+## 6.5 W25Q32 Data Storage
+
+The W25Q32 flash memory provides persistent local storage for the MeteoMini application.
+
+Two main types of data are stored in the flash memory:
+
+### Web Application
+
+The web interface resources are stored locally on the W25Q32. The Main ESP32 reads these resources from the flash memory and serves them to connected clients through the local web server.
+
+### Historical Measurements
+
+Measurement records are also stored in the W25Q32. The stored records are used by the History section of the web interface to display previously collected environmental data.
+
+This architecture allows MeteoMini to operate without an external database or cloud storage service.
+
+## 6.6 Local Web Server
+
+The Main ESP32 runs the MeteoMini web server directly.
+
+When a user connects to the station through Wi-Fi, the ESP32 serves the web application stored in the W25Q32.
+
+The browser-based interface communicates with the Main ESP32 to obtain current measurements and perform available control and configuration operations.
+
+The web server therefore provides the connection between the embedded system and the user.
+
+## 6.7 Web Application
+
+The MeteoMini web application provides a graphical interface for monitoring and controlling the station.
+
+The main sections are:
+
+* **Dashboard** — general overview of the system and current measurements.
+* **Weather** — detailed current environmental information.
+* **History** — previously recorded measurements.
+* **Settings** — system configuration and available controls.
+* **About** — general information about the MeteoMini system.
+
+The web application is stored locally in the W25Q32 and does not require a separate web server.
+
+## 6.8 Local Display Interface
+
+The Main ESP32 also controls the ST7789 display.
+
+The display provides a local interface for viewing current measurements and system information without accessing the web interface.
+
+The firmware manages the display content and supports different visual modes, including Day Mode and Night Mode.
+
+## 6.9 Software Data Flow
+
+The overall software data flow can be summarized as:
+
+<p align="center">
+  <b>
+  Sensors<br>
+  ↓<br>
+  Outdoor ESP32<br>
+  ↓<br>
+  ESP-NOW<br>
+  ↓<br>
+  Main ESP32<br>
+  ↙ ↓ ↘<br>
+  Display · W25Q32 · Web Server<br>
+  ↓ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ↓<br>
+  Local UI &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Web Browser
+  </b>
+</p>
+
