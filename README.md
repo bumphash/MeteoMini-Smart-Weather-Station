@@ -35,106 +35,50 @@ The general data flow can be represented as:
 
 ---
 
-## 3. User Interface
+## 3. Hardware Architecture
 
-MeteoMini provides a web-based interface divided into several functional sections.
+MeteoMini uses a distributed two-node architecture based on ESP32 microcontrollers. The system consists of an **Outdoor Unit** and a **Main Unit**. The two units communicate wirelessly using the ESP-NOW protocol.
 
-### 3.1 Dashboard
+### 3.1 Outdoor Unit
 
-The Dashboard provides a general overview of the current system status and environmental measurements.
+The Outdoor Unit is designed to collect environmental measurements directly from the outdoor environment.
 
-<p align="center">
-  <img src="images/Dashboard.png" width="800">
-</p>
+The unit is based on an ESP32 microcontroller and uses two environmental sensors:
 
-<p align="center">
-  <b>Figure 1. MeteoMini Dashboard</b>
-</p>
+* **SCD41** — measures carbon dioxide (CO₂), temperature and relative humidity.
+* **BME680** — measures temperature, relative humidity, atmospheric pressure and gas resistance.
 
-### 3.2 Weather
+The ESP32 collects data from both sensors and transmits the measurements wirelessly to the Main Unit using ESP-NOW.
 
-The Weather section provides detailed information about the current environmental conditions measured by the station.
+The Outdoor Unit allows the environmental sensors to be physically separated from the main display and control electronics, making it possible to place the measurement unit outside while keeping the Main Unit indoors.
 
-<p align="center">
-  <img src="images/Weather.png" width="800">
-</p>
+### 3.2 Main Unit
 
-<p align="center">
-  <b>Figure 2. Weather Monitoring Interface</b>
-</p>
+The Main Unit is the central part of the MeteoMini system. It is also based on an ESP32 microcontroller.
 
-### 3.3 History
+The Main Unit receives environmental data from the Outdoor Unit through ESP-NOW and combines it with measurements from its local **DHT11** sensor.
 
-The History section allows previously collected measurements to be reviewed and analyzed over time.
+The Main Unit is also responsible for data management, user-interface functionality and communication with the display and web interface.
 
-<p align="center">
-  <img src="images/History.png" width="800">
-</p>
+An external **W25Q32 SPI flash memory** is used for non-volatile storage of measurement data. This allows MeteoMini to retain historical measurements and make them available through the History section of the user interface.
 
-<p align="center">
-  <b>Figure 3. Historical Weather Data</b>
-</p>
+### 3.3 Wireless Communication
 
-### 3.4 Settings
+Communication between the Outdoor Unit and Main Unit is implemented using **ESP-NOW**.
 
-The Settings section provides configuration options for the MeteoMini system.
+ESP-NOW provides direct wireless communication between the two ESP32 devices without requiring the Outdoor Unit to connect to a conventional Wi-Fi network for data transmission.
+
+The Outdoor Unit periodically sends the collected sensor measurements to the Main Unit. The Main Unit receives and processes these measurements together with its local sensor data.
+
+### 3.4 Data Flow
+
+The overall measurement and communication flow is:
 
 <p align="center">
-  <img src="images/Setting.png" width="800">
+
+**SCD41 + BME680 → Outdoor ESP32 → ESP-NOW → Main ESP32 ← DHT11**
+
 </p>
 
-<p align="center">
-  <b>Figure 4. MeteoMini Settings Interface</b>
-</p>
+The Main ESP32 then processes the received and local measurements and provides the resulting data to the storage and user-interface layers.
 
-### 3.5 Night Mode
-
-MeteoMini includes a dedicated Night Mode for operation in low-light environments.
-
-<p align="center">
-  <img src="images/NightMode.png" width="800">
-</p>
-
-<p align="center">
-  <b>Figure 5. Night Mode Interface</b>
-</p>
-
----
-
-## 4. Local Display
-
-The local display provides direct access to current environmental measurements without requiring a separate computer or mobile device.
-
-### 4.1 Day Mode
-
-<p align="center">
-  <img src="images/Display.jpg" width="700">
-</p>
-
-<p align="center">
-  <b>Figure 6. MeteoMini Display — Day Mode</b>
-</p>
-
-### 4.2 Night Mode
-
-<p align="center">
-  <img src="images/DisplayNight.jpg" width="700">
-</p>
-
-<p align="center">
-  <b>Figure 7. MeteoMini Display — Night Mode</b>
-</p>
-
----
-
-## 5. System Information
-
-The About section provides general information about the MeteoMini system and software.
-
-<p align="center">
-  <img src="images/About.png" width="800">
-</p>
-
-<p align="center">
-  <b>Figure 8. MeteoMini About Section</b>
-</p>
