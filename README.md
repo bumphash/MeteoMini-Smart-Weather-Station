@@ -493,4 +493,137 @@ The overall software data flow can be summarized as:
   Local UI &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Web Browser
   </b>
 </p>
+# 7. Web Interface
+
+The MeteoMini web interface is hosted directly on the Main ESP32 and stored in the external W25Q32 flash memory. The ESP32 operates as a local web server and provides access to the interface through Wi-Fi.
+
+The interface is designed to provide real-time monitoring, historical data access and configuration of the weather station from a standard web browser.
+
+## 7.1 Dashboard
+
+The Dashboard is the main screen of the MeteoMini web interface. It provides a quick overview of the current system status and the available environmental measurements.
+
+The Dashboard is designed to present the most important information in a compact format, allowing the user to check the current state of the station without navigating through multiple pages.
+
+**Insert `Dashboard.png` here:**
+
+```html
+<p align="center">
+  <img src="images/Dashboard.png" width="800">
+</p>
+
+<p align="center">
+  <b>Figure 8. MeteoMini Dashboard</b>
+</p>
+```
+
+## 7.2 Weather
+
+The Weather section provides detailed information about the current environmental conditions measured by the MeteoMini system.
+
+Measurements received from the Outdoor Unit and measurements collected by the Main Unit are processed by the Main ESP32 and made available through the web interface.
+
+This section provides the user with a more detailed view of the current environmental conditions.
+
+**Insert `Weather.png` here:**
+
+```html
+<p align="center">
+  <img src="images/Weather.png" width="800">
+</p>
+
+<p align="center">
+  <b>Figure 9. Weather Monitoring Interface</b>
+</p>
+```
+
+## 7.3 History
+
+The History section provides access to previously recorded environmental measurements.
+
+Measurement data is stored locally in the W25Q32 flash memory. The Main ESP32 reads the stored records and provides them to the web application for visualization.
+
+This allows the user to review changes in environmental conditions over time without relying on an external database or cloud service.
+
+**Insert `History.png` here:**
+
+```html
+<p align="center">
+  <img src="images/History.png" width="800">
+</p>
+
+<p align="center">
+  <b>Figure 10. Historical Weather Data</b>
+</p>
+```
+
+## 7.4 Settings
+
+The Settings section provides access to available system configuration options.
+
+The user can interact with the Main ESP32 through the web interface without directly accessing the hardware. Configuration commands are received by the ESP32 through the local Wi-Fi connection and applied by the firmware.
+
+**Insert `Setting.png` here:**
+
+```html
+<p align="center">
+  <img src="images/Setting.png" width="800">
+</p>
+
+<p align="center">
+  <b>Figure 11. MeteoMini Settings Interface</b>
+</p>
+```
+
+## 7.5 Night Mode
+
+MeteoMini provides a dedicated Night Mode for operation in low-light environments.
+
+Night Mode changes the visual presentation of the interface to reduce the brightness and improve usability during nighttime operation.
+
+The mode is available as part of the station's user-interface functionality.
+
+**Insert `NightMode.png` here:**
+
+```html
+<p align="center">
+  <img src="images/NightMode.png" width="800">
+</p>
+
+<p align="center">
+  <b>Figure 12. MeteoMini Night Mode</b>
+</p>
+```
+
+## 7.6 About
+
+The About section provides general information about the MeteoMini system and its software.
+
+It serves as an information page within the web application and provides the user with basic project and system information.
+
+**Insert `About.png` here:**
+
+```html
+<p align="center">
+  <img src="images/About.png" width="800">
+</p>
+
+<p align="center">
+  <b>Figure 13. MeteoMini About Section</b>
+</p>
+```
+
+## 7.7 Web Interface Architecture
+
+The web interface is served entirely by the Main ESP32.
+
+The basic communication process is:
+
+<p align="center">
+  <b>Web Browser → Wi-Fi → Main ESP32 → W25Q32 / Sensors / System Data</b>
+</p>
+
+The Main ESP32 handles incoming web requests, accesses the required system data or configuration parameters and returns the appropriate response to the connected browser.
+
+Because the web application is stored locally on the W25Q32, MeteoMini does not require an external web server to operate its user interface.
 
