@@ -1,4 +1,5 @@
 1. Project Overview
+   
 MeteoMini is a compact IoT weather station designed for real-time environmental monitoring and data visualization. The system combines an embedded controller, environmental sensors, a local display and a web-based user interface into a single monitoring platform.
 
 The station collects environmental measurements, processes the sensor data and presents the current conditions to the user. Measurements can be viewed directly on the device display or remotely through the web interface.
