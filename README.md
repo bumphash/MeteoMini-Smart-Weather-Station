@@ -274,4 +274,83 @@ The web interface also provides control functions, allowing the user to configur
 
 
 </p>
+# 5. Pinout & Wiring
+
+This section documents the electrical connections between the ESP32 controllers and the sensors, display and external flash memory.
+
+## 5.1 Outdoor Unit — ESP32 + BME680
+
+The BME680 is connected to the Outdoor ESP32 using the I²C interface.
+
+| ESP32 OUTDOOR | BME680 | Function  |
+| ------------- | ------ | --------- |
+| 3.3V          | VCC    | Power     |
+| GND           | GND    | Ground    |
+| GPIO22        | SCL    | I²C Clock |
+| GPIO21        | SDA    | I²C Data  |
+
+## 5.2 Outdoor Unit — ESP32 + SCD41
+
+The SCD41 is connected to the same I²C bus as the BME680.
+
+| ESP32 OUTDOOR | SCD41 | Function  |
+| ------------- | ----- | --------- |
+| 3.3V          | VCC   | Power     |
+| GND           | GND   | Ground    |
+| GPIO22        | SCL   | I²C Clock |
+| GPIO21        | SDA   | I²C Data  |
+
+Both sensors share the same I²C bus:
+
+**GPIO22 → SCL**
+**GPIO21 → SDA**
+
+## 5.3 Main Unit — ESP32 + ST7789 Display
+
+The Main Unit uses a 2.0-inch 320×240 IPS color display based on the ST7789 controller.
+
+| ST7789 Display | ESP32 Main | Function          |
+| -------------- | ---------- | ----------------- |
+| VCC            | 3.3V       | Power             |
+| GND            | GND        | Ground            |
+| CLK            | GPIO18     | SPI Clock         |
+| SDA / MOSI     | GPIO23     | SPI Data          |
+| CS             | GPIO15     | Chip Select       |
+| DC             | GPIO2      | Data / Command    |
+| RST            | GPIO4      | Reset             |
+| BLK            | GPIO32     | Backlight Control |
+
+## 5.4 Main Unit — ESP32 + DHT11
+
+The DHT11 is connected to the Main ESP32 as a local temperature and humidity sensor.
+
+| DHT11    | ESP32 Main | Function    |
+| -------- | ---------- | ----------- |
+| VCC (+)  | 3.3V       | Power       |
+| D (DATA) | GPIO27     | Sensor Data |
+| GND (-)  | GND        | Ground      |
+
+## 5.5 Main Unit — ESP32 + W25Q32
+
+The W25Q32 external flash memory is connected to the Main ESP32 using SPI.
+
+| W25Q32 Module | ESP32 Main | Function    |
+| ------------- | ---------- | ----------- |
+| VCC           | 3.3V       | Power       |
+| GND           | GND        | Ground      |
+| CLK           | GPIO25     | SPI Clock   |
+| DI            | GPIO26     | MOSI        |
+| D0            | GPIO14     | MISO        |
+| CS            | GPIO21     | Chip Select |
+
+## 5.6 Interface Summary
+
+| Interface | ESP32 Unit     | Connected Devices | GPIO                                    |
+| --------- | -------------- | ----------------- | --------------------------------------- |
+| I²C       | Outdoor        | SCD41 + BME680    | SDA: GPIO21, SCL: GPIO22                |
+| SPI       | Main           | ST7789            | CLK: GPIO18, MOSI: GPIO23               |
+| SPI       | Main           | W25Q32            | CLK: GPIO25, MOSI: GPIO26, MISO: GPIO14 |
+| Digital   | Main           | DHT11             | GPIO27                                  |
+| ESP-NOW   | Outdoor ↔ Main | ESP32 ↔ ESP32     | Wireless                                |
+| Wi-Fi     | Main           | Web Browser       | Wireless                                |
 
