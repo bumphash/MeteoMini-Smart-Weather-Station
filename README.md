@@ -507,7 +507,7 @@ The Dashboard is designed to present the most important information in a compact
 
 **Insert `Dashboard.png` here:**
 
-```html
+
 <p align="center">
   <img src="images/Dashboard.png" width="800">
 </p>
@@ -515,7 +515,7 @@ The Dashboard is designed to present the most important information in a compact
 <p align="center">
   <b>Figure 8. MeteoMini Dashboard</b>
 </p>
-```
+
 
 ## 7.2 Weather
 
@@ -527,7 +527,7 @@ This section provides the user with a more detailed view of the current environm
 
 **Insert `Weather.png` here:**
 
-```html
+
 <p align="center">
   <img src="images/Weather.png" width="800">
 </p>
@@ -535,7 +535,7 @@ This section provides the user with a more detailed view of the current environm
 <p align="center">
   <b>Figure 9. Weather Monitoring Interface</b>
 </p>
-```
+
 
 ## 7.3 History
 
@@ -547,7 +547,7 @@ This allows the user to review changes in environmental conditions over time wit
 
 **Insert `History.png` here:**
 
-```html
+
 <p align="center">
   <img src="images/History.png" width="800">
 </p>
@@ -555,7 +555,7 @@ This allows the user to review changes in environmental conditions over time wit
 <p align="center">
   <b>Figure 10. Historical Weather Data</b>
 </p>
-```
+
 
 ## 7.4 Settings
 
@@ -565,7 +565,7 @@ The user can interact with the Main ESP32 through the web interface without dire
 
 **Insert `Setting.png` here:**
 
-```html
+
 <p align="center">
   <img src="images/Setting.png" width="800">
 </p>
@@ -573,7 +573,7 @@ The user can interact with the Main ESP32 through the web interface without dire
 <p align="center">
   <b>Figure 11. MeteoMini Settings Interface</b>
 </p>
-```
+
 
 ## 7.5 Night Mode
 
@@ -585,7 +585,7 @@ The mode is available as part of the station's user-interface functionality.
 
 **Insert `NightMode.png` here:**
 
-```html
+
 <p align="center">
   <img src="images/NightMode.png" width="800">
 </p>
@@ -593,7 +593,7 @@ The mode is available as part of the station's user-interface functionality.
 <p align="center">
   <b>Figure 12. MeteoMini Night Mode</b>
 </p>
-```
+
 
 ## 7.6 About
 
@@ -603,7 +603,7 @@ It serves as an information page within the web application and provides the use
 
 **Insert `About.png` here:**
 
-```html
+
 <p align="center">
   <img src="images/About.png" width="800">
 </p>
@@ -611,7 +611,7 @@ It serves as an information page within the web application and provides the use
 <p align="center">
   <b>Figure 13. MeteoMini About Section</b>
 </p>
-```
+
 
 ## 7.7 Web Interface Architecture
 
