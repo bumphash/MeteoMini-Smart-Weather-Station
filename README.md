@@ -505,7 +505,7 @@ The Dashboard is the main screen of the MeteoMini web interface. It provides a q
 
 The Dashboard is designed to present the most important information in a compact format, allowing the user to check the current state of the station without navigating through multiple pages.
 
-**Insert `Dashboard.png` here:**
+
 
 
 <p align="center">
@@ -525,7 +525,7 @@ Measurements received from the Outdoor Unit and measurements collected by the Ma
 
 This section provides the user with a more detailed view of the current environmental conditions.
 
-**Insert `Weather.png` here:**
+
 
 
 <p align="center">
@@ -545,7 +545,7 @@ Measurement data is stored locally in the W25Q32 flash memory. The Main ESP32 re
 
 This allows the user to review changes in environmental conditions over time without relying on an external database or cloud service.
 
-**Insert `History.png` here:**
+
 
 
 <p align="center">
@@ -563,7 +563,7 @@ The Settings section provides access to available system configuration options.
 
 The user can interact with the Main ESP32 through the web interface without directly accessing the hardware. Configuration commands are received by the ESP32 through the local Wi-Fi connection and applied by the firmware.
 
-**Insert `Setting.png` here:**
+
 
 
 <p align="center">
@@ -583,7 +583,7 @@ Night Mode changes the visual presentation of the interface to reduce the bright
 
 The mode is available as part of the station's user-interface functionality.
 
-**Insert `NightMode.png` here:**
+
 
 
 <p align="center">
@@ -601,7 +601,6 @@ The About section provides general information about the MeteoMini system and it
 
 It serves as an information page within the web application and provides the user with basic project and system information.
 
-**Insert `About.png` here:**
 
 
 <p align="center">
