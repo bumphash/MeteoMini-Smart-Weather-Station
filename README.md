@@ -131,9 +131,147 @@ The complete system data flow can be represented as follows:
 
 **Main ESP32**
 ↕
+
+## 3. Hardware Architecture
+
+### 4.1 Outdoor ESP32
+
+The Outdoor Unit is controlled by an ESP32 microcontroller. Its primary function is to acquire environmental data from the SCD41 and BME680 sensors and transmit the measurements to the Main Unit.
+
+The ESP32 communicates with the sensors, performs the initial processing of the measurements and prepares the data packet for wireless transmission.
+
+Communication with the Main Unit is performed using ESP-NOW. This allows the Outdoor Unit to operate as an independent measurement node without requiring a permanent connection to the local web interface.
+
+The Outdoor ESP32 is therefore responsible for:
+
+- sensor data acquisition;
+- initial data processing;
+- measurement packet preparation;
+- wireless transmission via ESP-NOW;
+- periodic measurement updates.
+
+- ### 4.2 SCD41 CO₂ Sensor
+
+The SCD41 is used in the Outdoor Unit for environmental monitoring. It provides measurements of:
+
+- CO₂ concentration;
+- temperature;
+- relative humidity.
+
+The sensor is connected to the Outdoor ESP32 and its measurements are periodically read by the firmware.
+
+The CO₂ measurement provides an additional environmental parameter that is not available from the BME680 or DHT11 sensors. Temperature and humidity data from the SCD41 can also be used as additional environmental measurements and for comparison with the other sensors.
+
+The collected SCD41 data is transmitted to the Main Unit together with the measurements from the BME680.
 **Wi-Fi**
 ↕
 **User Web Browser**
+
+### 4.3 BME680 Environmental Sensor
+
+The BME680 is used as the second environmental sensor in the Outdoor Unit.
+
+It provides measurements related to:
+
+- temperature;
+- relative humidity;
+- atmospheric pressure;
+- gas resistance.
+
+The ESP32 periodically reads the BME680 measurements and includes the available values in the data packet transmitted to the Main Unit.
+
+Using the BME680 together with the SCD41 allows the Outdoor Unit to collect a wider range of environmental parameters from a single location.
+
+### 4.4 Main ESP32
+
+The Main ESP32 is the central controller of the MeteoMini system.
+
+It receives measurement packets from the Outdoor ESP32 through ESP-NOW and simultaneously reads the local DHT11 sensor.
+
+The Main ESP32 processes the received and local measurements and makes the resulting data available to the rest of the system.
+
+Its main functions include:
+
+- receiving Outdoor Unit measurements;
+- reading the local DHT11 sensor;
+- processing measurement data;
+- controlling the ST7789 display;
+- managing W25Q32 flash memory;
+- storing historical measurements;
+- serving the web interface;
+- processing commands received from the web interface;
+- managing system settings;
+- providing Wi-Fi connectivity for user access.
+
+- ### 4.5 DHT11 Local Sensor
+
+The DHT11 is installed in the Main Unit and provides local temperature and relative humidity measurements.
+
+Unlike the SCD41 and BME680, which are installed in the Outdoor Unit, the DHT11 measures the environmental conditions at the location of the Main Unit.
+
+The Main ESP32 reads the DHT11 data and combines it with the measurements received from the Outdoor Unit.
+
+This allows MeteoMini to monitor environmental conditions at two different locations within the same system.
+
+### 4.6 W25Q32 Flash Memory
+
+The W25Q32 is an external non-volatile SPI flash memory connected to the Main ESP32.
+
+It is used as local storage for two major parts of the MeteoMini system:
+
+1. Web interface resources.
+2. Historical measurement data.
+
+The web application files are stored directly in the W25Q32 and served by the Main ESP32 when a user connects to the station through Wi-Fi.
+
+Historical sensor measurements are also stored in the same flash memory. The stored data can later be accessed through the History section of the web interface.
+
+Using external flash memory provides persistent local storage while keeping the system independent of an external database or cloud service.
+
+### 4.7 ST7789 IPS Display
+
+The Main Unit uses a 2.0-inch 320×240 IPS color display based on the ST7789 controller.
+
+The display is connected to the Main ESP32 using the SPI interface.
+
+It provides a local graphical user interface for displaying current measurements and system information.
+
+The display supports different visual modes, including Day Mode and Night Mode. This allows the same interface to be used during both normal daytime operation and in low-light environments.
+
+### 4.8 ESP-NOW Communication
+
+ESP-NOW is used as the wireless communication protocol between the Outdoor ESP32 and the Main ESP32.
+
+The Outdoor Unit acts as the measurement node and periodically transmits sensor data to the Main Unit.
+
+The Main Unit receives the data and integrates it with measurements from the local DHT11 sensor.
+
+The communication architecture can therefore be summarized as:
+
+<p align="center">
+  <b>Outdoor ESP32 → ESP-NOW → Main ESP32</b>
+</p>
+
+This separation allows the measurement hardware to be located outdoors while the main processing, storage, display and user interface remain in the Main Unit.
+
+### 4.9 Wi-Fi and Web Server
+
+The Main ESP32 creates and operates the MeteoMini web server.
+
+Users can connect to the Main Unit through Wi-Fi using a standard web browser. The web application is stored locally in the W25Q32 flash memory and is served directly by the Main ESP32.
+
+The web interface provides access to:
+
+- current measurements;
+- weather information;
+- historical data;
+- system settings;
+- display modes;
+- system information.
+
+The web interface also provides control functions, allowing the user to configure available system parameters remotely without directly interacting with the embedded hardware.
+
+
 
 </p>
 
