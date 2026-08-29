@@ -1033,3 +1033,182 @@ MeteoMini provides two methods of interacting with the system:
 | Web Interface | Wi-Fi + Browser | Remote monitoring and configuration |
 
 Both interfaces use the measurement data processed by the Main ESP32, providing two different ways to access the same system.
+
+# 12. Project Structure & Source Code
+
+The MeteoMini project is organized into separate software and hardware components to keep the system modular and easier to maintain.
+
+The firmware is divided according to the two ESP32 controllers used by the system.
+
+## 12.1 Outdoor Unit
+
+The Outdoor Unit contains the firmware responsible for:
+
+* SCD41 communication;
+* BME680 communication;
+* sensor data acquisition;
+* measurement processing;
+* ESP-NOW communication;
+* transmission of environmental data to the Main Unit.
+
+The Outdoor Unit operates independently from the Main Unit and focuses primarily on reliable environmental data acquisition.
+
+## 12.2 Main Unit
+
+The Main Unit contains the central MeteoMini firmware.
+
+Its source code is responsible for:
+
+* DHT11 communication;
+* ESP-NOW data reception;
+* measurement processing;
+* ST7789 display control;
+* W25Q32 flash memory management;
+* historical data storage;
+* Wi-Fi connectivity;
+* web server operation;
+* Web UI communication;
+* system configuration.
+
+## 12.3 Web Interface
+
+The Web UI is stored locally in the W25Q32 flash memory and is served by the Main ESP32.
+
+The web application consists of the resources required to create the MeteoMini graphical interface, including the different pages and user-interface components.
+
+The separation between the embedded firmware and Web UI allows the interface to be developed independently while remaining fully integrated with the Main ESP32.
+
+## 12.4 Project Organization
+
+The repository is organized to separate the different parts of the MeteoMini project.
+
+A typical project structure is:
+
+```text
+MeteoMini/
+│
+├── Outdoor_ESP32/
+│   └── Outdoor firmware
+│
+├── Main_ESP32/
+│   └── Main firmware
+│
+├── Web/
+│   └── Web interface files
+│
+├── images/
+│   └── Documentation images
+│
+└── README.md
+```
+
+The exact directory structure may evolve as the project develops.
+
+## 12.5 Modular Architecture
+
+The project follows a modular approach where individual hardware and software functions are separated into logical components.
+
+This makes it easier to:
+
+* modify individual system functions;
+* troubleshoot hardware or software problems;
+* add new sensors;
+* extend the Web UI;
+* change the data-storage implementation;
+* improve the communication protocol;
+* maintain the project over time.
+
+The modular structure also makes the project easier to understand and reproduce.
+
+# 13. Future Improvements
+
+MeteoMini is designed as an extensible embedded monitoring platform. The current architecture provides a solid foundation for adding new hardware and software functionality.
+
+Possible future improvements include the following.
+
+## 13.1 Additional Sensors
+
+The system can be extended with additional environmental sensors to increase the range of monitored parameters.
+
+Potential additions include:
+
+* precipitation detection;
+* wind speed and direction;
+* ambient light;
+* soil moisture;
+* additional air-quality sensors.
+
+## 13.2 Improved Historical Data Management
+
+The historical data subsystem can be further optimized to support larger datasets and more advanced data analysis.
+
+Possible improvements include:
+
+* optimized data compression;
+* configurable recording intervals;
+* improved flash-memory management;
+* data export functionality;
+* additional statistical analysis.
+
+## 13.3 Advanced Web Interface
+
+The Web UI can be extended with additional monitoring and configuration features.
+
+Possible improvements include:
+
+* interactive charts;
+* additional visualization options;
+* customizable dashboards;
+* data export;
+* advanced filtering;
+* responsive optimization for mobile devices.
+
+## 13.4 Notifications and Alerts
+
+An alert system could be added to notify the user when predefined environmental thresholds are exceeded.
+
+Examples include:
+
+* high CO₂ concentration;
+* excessive humidity;
+* abnormal temperature;
+* significant pressure changes;
+* sensor communication failures.
+
+## 13.5 Remote Connectivity
+
+The current local Wi-Fi architecture could be extended to support remote access.
+
+Possible implementations include:
+
+* MQTT communication;
+* integration with Home Assistant;
+* cloud-based data synchronization;
+* remote monitoring;
+* smartphone notifications.
+
+## 13.6 Power Optimization
+
+The Outdoor Unit could be optimized for lower power consumption.
+
+Potential improvements include:
+
+* deep-sleep operation;
+* optimized sensor measurement intervals;
+* reduced wireless activity;
+* battery-powered operation;
+* solar-assisted power supply.
+
+## 13.7 Hardware Development
+
+Future hardware revisions could integrate the current prototype components into custom PCBs.
+
+A dedicated PCB could reduce wiring complexity, improve reliability and make the system more compact and suitable for long-term deployment.
+
+## 13.8 System Scalability
+
+The architecture could also be extended to support multiple Outdoor Units.
+
+Multiple sensor nodes could provide environmental measurements from different locations while communicating with a single Main Unit.
+
+This would transform MeteoMini from a two-node monitoring system into a scalable distributed environmental monitoring platform.
