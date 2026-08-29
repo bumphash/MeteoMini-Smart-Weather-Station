@@ -1199,16 +1199,3 @@ Potential improvements include:
 * battery-powered operation;
 * solar-assisted power supply.
 
-## 13.7 Hardware Development
-
-Future hardware revisions could integrate the current prototype components into custom PCBs.
-
-A dedicated PCB could reduce wiring complexity, improve reliability and make the system more compact and suitable for long-term deployment.
-
-## 13.8 System Scalability
-
-The architecture could also be extended to support multiple Outdoor Units.
-
-Multiple sensor nodes could provide environmental measurements from different locations while communicating with a single Main Unit.
-
-This would transform MeteoMini from a two-node monitoring system into a scalable distributed environmental monitoring platform.
