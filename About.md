@@ -816,3 +816,220 @@ The Main ESP32 is the central communication point of the system. It receives sen
 
 This architecture keeps sensor acquisition, wireless data transfer, data storage and user interaction logically separated while allowing all components to operate as one integrated weather monitoring system.
 
+# 10. System Operation
+
+MeteoMini operates as a distributed monitoring system in which the Outdoor Unit collects outdoor environmental measurements and the Main Unit processes, stores and presents the data to the user.
+
+The system operation can be divided into several consecutive stages.
+
+## 10.1 System Startup
+
+After power-up, each ESP32 initializes its hardware and software components.
+
+The Outdoor ESP32 initializes the SCD41 and BME680 sensors and prepares the ESP-NOW communication interface.
+
+The Main ESP32 initializes the DHT11 sensor, ST7789 display, W25Q32 flash memory, Wi-Fi connection and local web server.
+
+After initialization, both units are ready for normal operation.
+
+## 10.2 Outdoor Measurement
+
+The Outdoor Unit periodically reads measurements from the SCD41 and BME680 sensors.
+
+The collected parameters include:
+
+* CO₂ concentration;
+* temperature;
+* relative humidity;
+* atmospheric pressure;
+* gas resistance.
+
+The Outdoor ESP32 processes the available sensor readings and prepares them for wireless transmission.
+
+## 10.3 Wireless Data Transfer
+
+The Outdoor ESP32 sends the collected measurements to the Main ESP32 using ESP-NOW.
+
+The Main ESP32 receives the transmitted data and updates the current outdoor measurement values.
+
+This process allows the Outdoor Unit to remain physically separated from the Main Unit while continuously providing environmental data.
+
+## 10.4 Local Measurement
+
+At the same time, the Main ESP32 reads the DHT11 sensor installed in the Main Unit.
+
+The DHT11 provides local temperature and relative humidity measurements.
+
+The Main ESP32 therefore has access to measurements from both locations:
+
+**Outdoor measurements:**
+
+<p align="center">
+  <b>SCD41 + BME680 → Outdoor ESP32 → ESP-NOW → Main ESP32</b>
+</p>
+
+**Local measurements:**
+
+<p align="center">
+  <b>DHT11 → Main ESP32</b>
+</p>
+
+## 10.5 Data Processing
+
+The Main ESP32 acts as the central processing point of the MeteoMini system.
+
+It combines the measurements received from the Outdoor Unit with the local DHT11 measurements and makes the current data available to the system's output and storage components.
+
+The processed data is used by:
+
+* the local ST7789 display;
+* the web interface;
+* the historical data storage system.
+
+## 10.6 Data Storage
+
+Measurement data is periodically recorded in the W25Q32 flash memory.
+
+The stored information forms the historical dataset used by the History section of the web interface.
+
+Because the data is stored in non-volatile flash memory, the historical records can remain available after the Main ESP32 is restarted.
+
+## 10.7 Local Display Update
+
+The Main ESP32 updates the ST7789 display using the current processed measurements.
+
+The display provides a local view of the station without requiring a network connection to a web browser.
+
+The firmware can change the display between the available visual modes, including Day Mode and Night Mode.
+
+## 10.8 Web Interface Operation
+
+The Main ESP32 runs the MeteoMini web server and provides access through Wi-Fi.
+
+When a user opens the station's web interface, the Main ESP32 serves the web application stored in the W25Q32.
+
+The web application can request current measurements, access historical data and send configuration or control commands to the Main ESP32.
+
+## 10.9 Complete System Cycle
+
+The complete MeteoMini operating cycle can be summarized as:
+
+<p align="center">
+  <b>
+  Sensor Measurement<br>
+  ↓<br>
+  Outdoor ESP32<br>
+  ↓<br>
+  ESP-NOW Transmission<br>
+  ↓<br>
+  Main ESP32<br>
+  ↓<br>
+  Data Processing<br>
+  ↙ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ↓ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ↘<br>
+  ST7789 Display &nbsp;&nbsp; W25Q32 &nbsp;&nbsp; Web Server<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ↓<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Wi-Fi<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ↓<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; User Browser
+  </b>
+</p>
+
+This continuous process allows MeteoMini to provide real-time environmental monitoring while simultaneously maintaining a local history of collected measurements.
+
+# 11. Control & Configuration
+
+MeteoMini provides remote control and configuration through a web interface hosted directly on the Main ESP32.
+
+The user can connect to the station over Wi-Fi using a standard web browser. Configuration commands are processed by the Main ESP32 and applied to the corresponding system functions.
+
+## 11.1 Web-Based Control
+
+The web interface provides the main method for interacting with the MeteoMini system.
+
+Instead of requiring direct physical access to the device, the user can perform available control and configuration operations remotely through the browser.
+
+The general control path is:
+
+<p align="center">
+  <b>User → Web Browser → Wi-Fi → Main ESP32 → System Function</b>
+</p>
+
+The Main ESP32 receives requests from the web interface, processes the corresponding commands and updates the system state.
+
+## 11.2 System Settings
+
+The Settings section provides access to the configurable parameters of the MeteoMini system.
+
+The available settings are handled by the Main ESP32 and can be changed through the web interface.
+
+After receiving a configuration request, the Main ESP32 validates and processes the requested change and applies it to the corresponding system function.
+
+**Insert `Setting.png` here if it is not already shown in Section 7:**
+
+<p align="center">
+  <img src="images/Setting.png" width="800">
+</p>
+
+<p align="center">
+  <b>Figure 17. MeteoMini Settings Interface</b>
+</p>
+
+## 11.3 Display Mode Control
+
+MeteoMini supports different display modes for different lighting conditions.
+
+The user can control the available display mode through the system interface. The selected mode is processed by the Main ESP32 and applied to the local ST7789 display.
+
+The display modes include:
+
+* **Day Mode** — intended for normal ambient lighting.
+* **Night Mode** — intended for operation in low-light environments.
+
+The selected display configuration affects the local graphical interface while the underlying measurement and communication functions continue to operate.
+
+## 11.4 Remote System Interaction
+
+The web interface acts as a remote control layer between the user and the embedded system.
+
+Depending on the available functionality, the user can:
+
+* monitor current measurements;
+* access historical measurements;
+* change available system settings;
+* control display-related functions;
+* access system information.
+
+The Main ESP32 remains responsible for executing the requested operations. The web application provides the user interface, while the embedded firmware provides the actual system control logic.
+
+## 11.5 Configuration Data Flow
+
+The general configuration process is:
+
+<p align="center">
+  <b>
+  User Action<br>
+  ↓<br>
+  Web Interface<br>
+  ↓<br>
+  Wi-Fi<br>
+  ↓<br>
+  Main ESP32<br>
+  ↓<br>
+  Configuration Processing<br>
+  ↓<br>
+  System State Update
+  </b>
+</p>
+
+This architecture keeps the user interface and embedded control logic separated while allowing the complete system to be operated remotely.
+
+## 11.6 Local and Remote Interfaces
+
+MeteoMini provides two methods of interacting with the system:
+
+| Interface     | Access          | Main Purpose                        |
+| ------------- | --------------- | ----------------------------------- |
+| Local Display | ST7789          | Direct monitoring at the device     |
+| Web Interface | Wi-Fi + Browser | Remote monitoring and configuration |
+
+Both interfaces use the measurement data processed by the Main ESP32, providing two different ways to access the same system.
