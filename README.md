@@ -708,3 +708,111 @@ The storage architecture can be summarized as:
 | Web Application         | W25Q32         | Local Web UI               |
 | Historical Measurements | W25Q32         | Long-term data access      |
 | Current Measurements    | Main ESP32 RAM | Real-time system operation |
+
+# 9. Communication Architecture
+
+MeteoMini uses two wireless communication technologies for different system functions: **ESP-NOW** for communication between the Outdoor and Main Units, and **Wi-Fi** for communication between the Main Unit and the user's web browser.
+
+This separation allows the Outdoor Unit to focus on sensor acquisition while the Main Unit handles data processing, storage, display control and user interaction.
+
+## 9.1 ESP-NOW Communication
+
+ESP-NOW is used as the primary communication channel between the two ESP32 controllers.
+
+The Outdoor ESP32 collects measurements from the SCD41 and BME680 sensors and transmits the collected data directly to the Main ESP32.
+
+The Main ESP32 receives the transmitted data and integrates it with measurements obtained from the local DHT11 sensor.
+
+The communication path is:
+
+<p align="center">
+  <b>SCD41 + BME680 → Outdoor ESP32 → ESP-NOW → Main ESP32</b>
+</p>
+
+ESP-NOW allows the two devices to exchange data directly without requiring the Outdoor Unit to communicate with an external server.
+
+## 9.2 Outdoor Data Transmission
+
+The Outdoor Unit periodically creates a measurement data packet containing the available sensor values.
+
+The packet is transmitted from the Outdoor ESP32 to the Main ESP32 using ESP-NOW.
+
+The Main Unit receives the packet and updates the corresponding environmental measurements.
+
+The general process is:
+
+1. Read SCD41 measurements.
+2. Read BME680 measurements.
+3. Prepare the measurement data.
+4. Transmit the data packet using ESP-NOW.
+5. Main ESP32 receives the packet.
+6. Main ESP32 updates the current outdoor measurements.
+
+This approach minimizes the communication responsibilities of the Outdoor Unit and keeps the central processing logic inside the Main Unit.
+
+## 9.3 Wi-Fi Communication
+
+The Main ESP32 provides Wi-Fi connectivity for user interaction with the MeteoMini system.
+
+The Main Unit operates as a local web server. A user can connect to the station through Wi-Fi and access the MeteoMini web interface using a standard web browser.
+
+The communication path is:
+
+<p align="center">
+  <b>Main ESP32 ↔ Wi-Fi ↔ Web Browser</b>
+</p>
+
+The Wi-Fi connection is used for monitoring measurements, accessing historical data and controlling available system functions.
+
+## 9.4 Web Server Communication
+
+The web server runs directly on the Main ESP32.
+
+When the browser sends a request, the Main ESP32 processes the request and provides the required response.
+
+Depending on the requested operation, the Main ESP32 may:
+
+* provide a web-interface resource stored in the W25Q32;
+* return current sensor measurements;
+* retrieve historical data from the W25Q32;
+* receive configuration commands;
+* update system settings;
+* provide system information.
+
+The web server therefore acts as the communication layer between the embedded system and the user interface.
+
+## 9.5 Communication Architecture
+
+The complete communication architecture can be represented as:
+
+<p align="center">
+  <b>
+  SCD41 + BME680<br>
+  ↓<br>
+  Outdoor ESP32<br>
+  ↓<br>
+  ESP-NOW<br>
+  ↓<br>
+  Main ESP32<br>
+  ↕<br>
+  Wi-Fi<br>
+  ↕<br>
+  Web Browser
+  </b>
+</p>
+
+The Main ESP32 is the central communication point of the system. It receives sensor data from the Outdoor Unit and provides access to the station through the local Wi-Fi network.
+
+## 9.6 Communication Responsibilities
+
+| Communication Channel | Source        | Destination    | Purpose                           |
+| --------------------- | ------------- | -------------- | --------------------------------- |
+| I²C                   | Outdoor ESP32 | SCD41 + BME680 | Sensor data acquisition           |
+| ESP-NOW               | Outdoor ESP32 | Main ESP32     | Outdoor measurement transmission  |
+| Digital               | Main ESP32    | DHT11          | Local measurement acquisition     |
+| SPI                   | Main ESP32    | W25Q32         | Web and historical data storage   |
+| SPI                   | Main ESP32    | ST7789         | Local display control             |
+| Wi-Fi                 | Main ESP32    | Web Browser    | User interface and system control |
+
+This architecture keeps sensor acquisition, wireless data transfer, data storage and user interaction logically separated while allowing all components to operate as one integrated weather monitoring system.
+
